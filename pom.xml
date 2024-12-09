@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>lk.zerocode</groupId>
-	<artifactId>school-management-system-api</artifactId>
+	<artifactId>sms-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>School-management-system</name>
 	<description>school management system for private school in sri lanka</description>
