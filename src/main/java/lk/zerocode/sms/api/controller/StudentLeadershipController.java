@@ -34,7 +34,7 @@ public class StudentLeadershipController {
 
     @GetMapping(value = "/students/{student-id}/grades/{grade-id}/Leaderships",headers = "X-Api-Version=v1")
     public ResponseEntity<List<LeadershipResponse>> readAll(@PathVariable("student-id") Long studentId,
-                                                                 @PathVariable("grade-id")Long gradeId)throws StudentNotFoundException,GradeNotFoundException{
+                                                            @PathVariable("grade-id") Long gradeId)throws StudentNotFoundException,GradeNotFoundException{
 
         List<StudentLeadership> studentLeaderships = studentLeadershipService.getAllByGradesWise(studentId,gradeId);
         List<LeadershipResponse> leadershipResponses = studentLeaderships.stream()

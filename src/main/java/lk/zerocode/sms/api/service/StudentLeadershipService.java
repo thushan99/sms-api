@@ -16,5 +16,5 @@ public interface StudentLeadershipService {
 
     List<StudentLeadership> getAllByGradesWise(Long studentId, Long gradeId) throws StudentNotFoundException, GradeNotFoundException;
 
-    StudentLeadership deleteById(Long leadershipId) throws LeadershipNotFoundException;
+    void deleteById(Long leadershipId) throws LeadershipNotFoundException;
 }

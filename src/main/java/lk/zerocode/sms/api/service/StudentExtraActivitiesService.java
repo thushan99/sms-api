@@ -16,5 +16,5 @@ public interface StudentExtraActivitiesService {
 
     List<StudentExtraActivity> getAllByGradesWise(Long studentId,Long gradeId)throws StudentNotFoundException,GradeNotFoundException ;
 
-    StudentExtraActivity deleteById(Long activityId)throws ExtraActivityNotFoundException;
+    void deleteById(Long activityId)throws ExtraActivityNotFoundException;
 }
