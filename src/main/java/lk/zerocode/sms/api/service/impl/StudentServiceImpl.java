@@ -6,7 +6,6 @@ import lk.zerocode.sms.api.exception.GradeNotFoundException;
 import lk.zerocode.sms.api.exception.StudentInactiveException;
 import lk.zerocode.sms.api.exception.StudentNotFoundException;
 import lk.zerocode.sms.api.model.*;
-import lk.zerocode.sms_api.model.*;
 import lk.zerocode.sms.api.repository.GradeRepository;
 import lk.zerocode.sms.api.repository.StudentRepository;
 import lk.zerocode.sms.api.service.StudentService;
