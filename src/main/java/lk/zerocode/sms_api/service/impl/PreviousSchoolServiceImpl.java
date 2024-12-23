@@ -27,7 +27,8 @@ public class PreviousSchoolServiceImpl implements PreviousSchoolService {
     @Override
     public PreviousSchool create(Long studentId, PreviousSchoolRequest request) throws StudentNotFoundException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
         PreviousSchool studentPreviousSchool = modelMapper.map(request, PreviousSchool.class);
         studentPreviousSchool.setStudent(student);
         return previousSchoolRepository.save(studentPreviousSchool);
