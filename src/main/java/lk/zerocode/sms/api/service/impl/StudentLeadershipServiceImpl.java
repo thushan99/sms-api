@@ -52,10 +52,9 @@ public class StudentLeadershipServiceImpl implements StudentLeadershipService {
     }
 
     @Override
-    public StudentLeadership deleteById(Long leadershipId) throws LeadershipNotFoundException {
+    public void deleteById(Long leadershipId) throws LeadershipNotFoundException {
 
         StudentLeadership leadership = studentLeadershipRepository.findById(leadershipId).orElseThrow(() -> new LeadershipNotFoundException("Student with id " + leadershipId + " not found"));
         studentLeadershipRepository.delete(leadership);
-        return null;
     }
 }

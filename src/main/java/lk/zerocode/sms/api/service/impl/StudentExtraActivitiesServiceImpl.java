@@ -52,10 +52,9 @@ public class StudentExtraActivitiesServiceImpl implements StudentExtraActivities
     }
 
     @Override
-    public StudentExtraActivity deleteById(Long activityId) throws ExtraActivityNotFoundException {
+    public void deleteById(Long activityId) throws ExtraActivityNotFoundException {
 
         StudentExtraActivity studentExtraActivity = studentExtraActivityRepository.findById(activityId).orElseThrow(() -> new ExtraActivityNotFoundException("Student with id " + activityId + " not found"));
         studentExtraActivityRepository.delete(studentExtraActivity);
-        return null;
     }
 }
