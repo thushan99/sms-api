@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface StudentHealthRepository extends JpaRepository<StudentHealth, Long> {
 
-
     List<StudentHealth> findByStudentId(Long id);
 }

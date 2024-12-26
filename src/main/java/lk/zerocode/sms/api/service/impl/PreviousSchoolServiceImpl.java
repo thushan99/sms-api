@@ -77,7 +77,8 @@ public class PreviousSchoolServiceImpl implements PreviousSchoolService {
     @Override
     public void deleteById(Long studentId, Long schoolId) throws StudentNotFoundException, SchoolNotFoundException, StudentInactiveException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
         if (!Status.ACTIVE.equals(student.getStatus())) {
             throw new StudentInactiveException("Student is Inactive " + studentId);
         }

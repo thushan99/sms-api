@@ -32,7 +32,8 @@ public class StudentServiceImpl implements StudentService {
         }
 
         Student student = modelMapper.map(request, Student.class);
-        Grade grade = gradeRepository.findById(request.getGrade()).orElseThrow(() -> new GradeNotFoundException("Grade not found for ID: " + request.getGrade()));
+        Grade grade = gradeRepository.findById(request.getGrade())
+                .orElseThrow(() -> new GradeNotFoundException("Grade not found for ID: " + request.getGrade()));
 
         student.setGrade(grade);
         student.setDraft(Draft.INCOMPLETE);
@@ -88,15 +89,16 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentGradeDetailsResponse getStudentWithGrades(Long studentId) throws StudentNotFoundException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student not found for ID: " + studentId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found for ID: " + studentId));
         Grade grade = student.getGrade();
         if (grade == null) {
-            throw new RuntimeException("No grade assigned to this student.");
+            throw new RuntimeException("No grade assigned to this student");
         }
         Teacher teacher = grade.getTeacher();
 
         if (teacher == null) {
-            throw new RuntimeException("No teacher assigned to this grades.");
+            throw new RuntimeException("No teacher assigned to this grades");
         }
 
         StudentGradeDetailsResponse studentGradeDetailsResponse = new StudentGradeDetailsResponse();
