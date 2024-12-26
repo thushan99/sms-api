@@ -23,64 +23,41 @@ public class PreviousSchoolController {
     private ModelMapper modelMapper;
 
     @PostMapping(value = "/students/{student-id}/previous-schools", headers = "X-Api-Version=v1")
-    public ResponseEntity<StudentPreviousSchoolResponse> create(@PathVariable("student-id") Long studentId,
-                                                                @RequestBody PreviousSchoolRequest previousSchoolRequest) {
-        try {
-            PreviousSchool studentPreviousSchool = previousSchoolService.create(studentId, previousSchoolRequest);
-            StudentPreviousSchoolResponse studentPreviousSchoolResponse = modelMapper.map(studentPreviousSchool, StudentPreviousSchoolResponse.class);
-            return new ResponseEntity<>(studentPreviousSchoolResponse, HttpStatus.CREATED);
-        } catch (StudentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<StudentPreviousSchoolResponse> create(@PathVariable("student-id") Long studentId, @RequestBody PreviousSchoolRequest previousSchoolRequest) throws StudentNotFoundException {
+
+        PreviousSchool studentPreviousSchool = previousSchoolService.create(studentId, previousSchoolRequest);
+        StudentPreviousSchoolResponse studentPreviousSchoolResponse = modelMapper.map(studentPreviousSchool, StudentPreviousSchoolResponse.class);
+        return new ResponseEntity<>(studentPreviousSchoolResponse, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/students/{student-id}/previous-schools", headers = "X-Api-Version=v1")
-    public ResponseEntity<List<StudentPreviousSchoolResponse>> getAll(@PathVariable("student-id") Long studentId) {
+    public ResponseEntity<List<StudentPreviousSchoolResponse>> getAll(@PathVariable("student-id") Long studentId) throws StudentNotFoundException {
 
-        try {
-            List<PreviousSchool> previousSchoolList = previousSchoolService.getAll(studentId);
-            List<StudentPreviousSchoolResponse> schoolResponses = previousSchoolList
-                    .stream().map(studentPreviousSchool -> modelMapper
-                            .map(studentPreviousSchool, StudentPreviousSchoolResponse.class)).toList();
-            return new ResponseEntity<>(schoolResponses, HttpStatus.OK);
-        } catch (StudentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<PreviousSchool> previousSchoolList = previousSchoolService.getAll(studentId);
+        List<StudentPreviousSchoolResponse> schoolResponses = previousSchoolList.stream()
+                .map(studentPreviousSchool -> modelMapper.map(studentPreviousSchool, StudentPreviousSchoolResponse.class)).toList();
+        return new ResponseEntity<>(schoolResponses, HttpStatus.OK);
     }
 
     @GetMapping(value = "/students/{student-id}/previous-schools/{school-id}", headers = "X-Api-Version=v1")
-    public ResponseEntity<StudentPreviousSchoolResponse> getById(@PathVariable("student-id") Long studentId,
-                                                                 @PathVariable("school-id") Long schoolId) {
-        try {
-            PreviousSchool previousSchool = previousSchoolService.getById(studentId, schoolId);
-            StudentPreviousSchoolResponse previousSchoolResponse = modelMapper.map(previousSchool, StudentPreviousSchoolResponse.class);
-            return new ResponseEntity<>(previousSchoolResponse, HttpStatus.OK);
-        } catch (StudentNotFoundException | SchoolNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<StudentPreviousSchoolResponse> getById(@PathVariable("student-id") Long studentId, @PathVariable("school-id") Long schoolId) throws StudentNotFoundException, SchoolNotFoundException {
+
+        PreviousSchool previousSchool = previousSchoolService.getById(studentId, schoolId);
+        StudentPreviousSchoolResponse previousSchoolResponse = modelMapper.map(previousSchool, StudentPreviousSchoolResponse.class);
+        return new ResponseEntity<>(previousSchoolResponse, HttpStatus.OK);
     }
 
     @PutMapping(value = "/students/{student-id}/previous-schools/{school-id}", headers = "X-Api-Version=v1")
-    public ResponseEntity<StudentPreviousSchoolResponse> updateById(@PathVariable("student-id") Long studentId,
-                                                                    @PathVariable("school-id") Long schoolId,
-                                                                    @RequestBody PreviousSchoolRequest request) throws StudentNotFoundException {
-        try {
-            PreviousSchool previousSchool = previousSchoolService.updateById(studentId, schoolId, request);
-            StudentPreviousSchoolResponse previousSchoolResponse = modelMapper.map(previousSchool, StudentPreviousSchoolResponse.class);
-            return new ResponseEntity<>(previousSchoolResponse, HttpStatus.OK);
-        } catch (StudentNotFoundException | SchoolNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<StudentPreviousSchoolResponse> updateById(@PathVariable("student-id") Long studentId, @PathVariable("school-id") Long schoolId, @RequestBody PreviousSchoolRequest request) throws StudentNotFoundException, SchoolNotFoundException {
+
+        PreviousSchool previousSchool = previousSchoolService.updateById(studentId, schoolId, request);
+        StudentPreviousSchoolResponse previousSchoolResponse = modelMapper.map(previousSchool, StudentPreviousSchoolResponse.class);
+        return new ResponseEntity<>(previousSchoolResponse, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/students/{student-id}/previous-schools/{school-id}", headers = "X-Api-Version=v1")
-    public ResponseEntity<StudentPreviousSchoolResponse> deleteById(@PathVariable("student-id") Long studentId,
-                                                                    @PathVariable("school-id") Long schoolId) {
-        try {
-            previousSchoolService.deleteById(studentId, schoolId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (StudentNotFoundException | SchoolNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<StudentPreviousSchoolResponse> deleteById(@PathVariable("student-id") Long studentId, @PathVariable("school-id") Long schoolId) throws StudentNotFoundException, SchoolNotFoundException {
+        previousSchoolService.deleteById(studentId, schoolId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -77,6 +77,12 @@ public class GradeServiceImpl implements GradeService {
     @Override
     public List<GradeSummaryResponse> getGradeTeacherDetails() {
         List<GradeSummaryProjection> projections = studentRepository.findGradeSummaries(Gender.FEMALE, Gender.MALE);
-        return projections.stream().map(projection -> new GradeSummaryResponse(projection.getGrade(), projection.getGradeName(), projection.getTeacherName(), projection.getFemaleCount(), projection.getMaleCount())).toList();
+        return projections.stream()
+                .map(projection -> new GradeSummaryResponse(projection.getGrade(),
+                        projection.getGradeName(),
+                        projection.getTeacherName(),
+                        projection.getFemaleCount(),
+                        projection.getMaleCount()))
+                .toList();
     }
 }

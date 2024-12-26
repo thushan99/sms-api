@@ -23,69 +23,47 @@ public class StudentController {
     private ModelMapper modelMapper;
 
     @PostMapping(value = "/students", headers = "X-Api-Version=v1")
-    public ResponseEntity<?> create(@RequestBody StudentInformationRequest studentInformationRequest) {
+    public ResponseEntity<?> create(@RequestBody StudentInformationRequest studentInformationRequest) throws GradeNotFoundException {
 
-        try {
             Student createdStudent = studentService.create(studentInformationRequest);
             StudentInformationResponse response = modelMapper.map(createdStudent, StudentInformationResponse.class);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-        } catch (GradeNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred: " + e.getMessage());
-        }
     }
 
     @GetMapping(value = "/students", headers = "X-Api-Version=v1")
     public ResponseEntity<List<StudentInformationResponse>> getAll() {
-        try {
+
             List<Student> studentList = studentService.getAll();
             List<StudentInformationResponse> studentInformationResponses = studentList
                     .stream().map(student -> modelMapper
                             .map(student, StudentInformationResponse.class)).toList();
             return new ResponseEntity<>(studentInformationResponses, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping(value = "/students/{student-id}", headers = "X-Api-Version=v1")
-    public ResponseEntity<StudentInformationResponse> getById(@PathVariable("student-id") Long studentId) {
-        try {
+    public ResponseEntity<StudentInformationResponse> getById(@PathVariable("student-id") Long studentId) throws StudentNotFoundException {
+
             Student student = studentService.getById(studentId);
             StudentInformationResponse response = modelMapper.map(student, StudentInformationResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (StudentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @PutMapping(value = "/students/{student-id}", headers = "X-Api-Version=v1")
     public ResponseEntity<StudentInformationResponse> updateById(
             @RequestBody StudentInformationRequest studentInformationRequest,
-            @PathVariable("student-id") Long studentId) {
-        try {
+            @PathVariable("student-id") Long studentId) throws GradeNotFoundException, StudentNotFoundException {
+
             Student updatedStudent = studentService.updateById(studentInformationRequest, studentId);
             StudentInformationResponse response = modelMapper.map(updatedStudent, StudentInformationResponse.class);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (GradeNotFoundException | StudentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
     }
   
    @DeleteMapping(value = "/students/{student-id}", headers = "X-Api-Version=v1")
-    public ResponseEntity<?> deleteById(@PathVariable("student-id") Long studentId) {
-        try {
+    public ResponseEntity<?> deleteById(@PathVariable("student-id") Long studentId) throws StudentNotFoundException {
+
             studentService.deleteById(studentId);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (StudentNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping(value = "/students/grades/students/{student-id}",headers = "X-Api-Version")
