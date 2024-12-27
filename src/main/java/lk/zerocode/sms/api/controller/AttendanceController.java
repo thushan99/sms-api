@@ -3,6 +3,7 @@ package lk.zerocode.sms.api.controller;
 import lk.zerocode.sms.api.controller.request.AttendanceRequest;
 import lk.zerocode.sms.api.controller.request.AttendanceUpdateRequest;
 import lk.zerocode.sms.api.controller.response.AttendanceResponse;
+import lk.zerocode.sms.api.controller.response.TotalAttendanceResponse;
 import lk.zerocode.sms.api.exception.GradeNotFoundException;
 import lk.zerocode.sms.api.exception.StudentNotFoundException;
 import lk.zerocode.sms.api.model.Attendance;
@@ -26,6 +27,7 @@ public class AttendanceController {
 
     @PostMapping(value = "/attendances/{student-id}", headers = "X-Api-Version=v1")
     public ResponseEntity<?> create(@PathVariable("student-id") Long studentId, @RequestBody AttendanceRequest attendanceRequest) throws GradeNotFoundException, StudentNotFoundException {
+
         Attendance createdAttendance = attendanceService.create(studentId, attendanceRequest);
         AttendanceResponse attendanceResponse = modelMapper.map(createdAttendance, AttendanceResponse.class);
         return new ResponseEntity<>(attendanceResponse, HttpStatus.CREATED);
@@ -33,6 +35,7 @@ public class AttendanceController {
 
     @GetMapping(value = "/attendances", headers = "X-Api-Version=v1")
     public ResponseEntity<List<AttendanceResponse>> findAll(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+
         Sort sort = Sort.by(Sort.Order.asc("date"));
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
@@ -57,8 +60,22 @@ public class AttendanceController {
         return new ResponseEntity<>(attendanceResponse, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/students/{studentId}/attendances", headers = "X-Api-Version=v1")
+    public ResponseEntity<List<TotalAttendanceResponse>> getMonthlyAttendanceByStudentId(@PathVariable("studentId") Long studentId) {
+
+        List<TotalAttendanceResponse> response = attendanceService.getTotalAttendanceList(studentId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/students/{studentId}/current-attendances", headers = "X-Api-Version=v1")
+    public ResponseEntity<TotalAttendanceResponse> getCurrentMonthlyAttendanceByStudentId (@PathVariable("studentId") Long studentId) {
+        TotalAttendanceResponse response =attendanceService.getTotalAttendance(studentId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping(value = "/attendances/{attendance-id}", headers = "X-Api-Version=v1")
     public ResponseEntity<?> updateById(@PathVariable("attendance-id") Long attendanceId, @RequestBody AttendanceUpdateRequest attendanceUpdateRequest) {
+
         Attendance attendance = attendanceService.update(attendanceId, attendanceUpdateRequest);
         AttendanceResponse attendanceResponse = modelMapper.map(attendance, AttendanceResponse.class);
         return new ResponseEntity<>(attendanceResponse, HttpStatus.OK);

@@ -11,6 +11,7 @@ import lk.zerocode.sms.api.model.Attendance;
 import lk.zerocode.sms.api.model.CheckInOutState;
 import lk.zerocode.sms.api.model.Grade;
 import lk.zerocode.sms.api.model.Student;
+import lk.zerocode.sms.api.projection.StudentAttendanceMonthlyProjection;
 import lk.zerocode.sms.api.repository.AttendanceRepository;
 import lk.zerocode.sms.api.repository.GradeRepository;
 import lk.zerocode.sms.api.repository.StudentRepository;
@@ -23,8 +24,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -79,18 +82,44 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public List<TotalAttendanceResponse> getTotalAttendanceList(Long studentId) {
-        return List.of();
+        List<StudentAttendanceMonthlyProjection> projections =attendanceRepository.findMonthlyAttendanceCountsByStudentId(studentId);
+        return projections.stream()
+                .map(projection->{
+                    TotalAttendanceResponse response = new TotalAttendanceResponse();
+                    response.setYearMonth(projection.getYearMonth());
+                    response.setPresentCount(projection.getPresentCount());
+                    response.setAbsentCount(projection.getAbsentCount());
+                    response.setLateCount(projection.getLateCount());
+                    return response;
+
+                })
+                .toList();
     }
 
     @Override
     public TotalAttendanceResponse getTotalAttendance(Long studentId) {
-        return null;
+
+        LocalDate today = LocalDate.now();
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+        LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+        StudentAttendanceMonthlyProjection projection =
+                attendanceRepository.findCurrentMonthAttendanceCountsByStudentId(studentId, startOfMonth, endOfMonth);
+
+        TotalAttendanceResponse response = new TotalAttendanceResponse();
+        response.setYearMonth(today.format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        response.setPresentCount(projection.getPresentCount());
+        response.setLateCount(projection.getLateCount());
+        response.setAbsentCount(projection.getAbsentCount());
+
+        return response;
     }
 
     @Override
     public Attendance update(Long attendanceId, AttendanceUpdateRequest attendanceUpdateRequest) {
 
-        Attendance attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new AttendanceNotFoundException("Student Not Found" + attendanceId));
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new AttendanceNotFoundException("Student Not Found" + attendanceId));
         attendance.setStatus(attendanceUpdateRequest.getStatus());
         attendance.setRemarks(attendanceUpdateRequest.getRemarks());
         return attendanceRepository.save(attendance);
@@ -99,7 +128,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public void delete(Long attendanceId) {
 
-        Attendance attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new AttendanceNotFoundException("Student Not Found" + attendanceId));
+        Attendance attendance = attendanceRepository.findById(attendanceId)
+                .orElseThrow(() -> new AttendanceNotFoundException("Student Not Found" + attendanceId));
         attendanceRepository.delete(attendance);
     }
 }

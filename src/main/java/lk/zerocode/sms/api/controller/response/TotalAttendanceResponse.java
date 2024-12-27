@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class TotalAttendanceResponse {
 
-    private Integer totalPresent;
-    private Integer totalAbsent;
-    private Integer totalLate;
+    private String yearMonth;
+    private Long presentCount;
+    private Long lateCount;
+    private Long absentCount;
 }
