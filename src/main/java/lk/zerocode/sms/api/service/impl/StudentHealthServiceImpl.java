@@ -11,7 +11,6 @@ import lk.zerocode.sms.api.repository.StudentHealthRepository;
 import lk.zerocode.sms.api.repository.StudentRepository;
 import lk.zerocode.sms.api.service.StudentHealthService;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,14 +21,16 @@ public class StudentHealthServiceImpl implements StudentHealthService {
 
     private StudentHealthRepository studentHealthRepository;
     private StudentRepository studentRepository;
-    private ModelMapper modelMapper;
 
     @Override
     public StudentHealth create(Long studentId, HealthStatusRequest request) throws StudentNotFoundException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
-        StudentHealth studentHealth = modelMapper.map(request, StudentHealth.class);
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
+        StudentHealth studentHealth = new StudentHealth();
         studentHealth.setStudent(student);
+        studentHealth.setHealthCondition(request.getHealthCondition());
+        studentHealth.setDiagnosisDate(request.getDiagnosisDate());
         return studentHealthRepository.save(studentHealth);
     }
 
@@ -53,7 +54,8 @@ public class StudentHealthServiceImpl implements StudentHealthService {
     @Override
     public StudentHealth getById(Long studentId, Long healthId) throws StudentNotFoundException, StudentInactiveException, HealthStatusNotFoundException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
 
         if (!Status.ACTIVE.equals(student.getStatus())) {
             throw new StudentInactiveException("Student is Inactive " + studentId);
@@ -70,19 +72,24 @@ public class StudentHealthServiceImpl implements StudentHealthService {
         if (!Status.ACTIVE.equals(student.getStatus())) {
             throw new StudentInactiveException("Student is Inactive " + studentId);
         }
-        StudentHealth existingHealth = studentHealthRepository.findById(healthId).orElseThrow(() -> new HealthStatusNotFoundException("Health Status is Not Found " + healthId));
-        modelMapper.map(request, existingHealth);
+        StudentHealth existingHealth = studentHealthRepository.findById(healthId)
+                .orElseThrow(() -> new HealthStatusNotFoundException("Health Status is Not Found " + healthId));
+        existingHealth.setHealthCondition(request.getHealthCondition());
+        existingHealth.setDiagnosisDate(request.getDiagnosisDate());
         return studentHealthRepository.save(existingHealth);
     }
 
     @Override
     public void deleteById(Long studentId, Long healthId) throws StudentNotFoundException, StudentInactiveException, HealthStatusNotFoundException {
 
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student Not Found " + studentId));
         if (!Status.ACTIVE.equals(student.getStatus())) {
             throw new StudentInactiveException("Student is Inactive " + studentId);
         }
         StudentHealth studentHealth = studentHealthRepository.findById(healthId).orElseThrow(() -> new HealthStatusNotFoundException("Health Status is Not Found " + healthId));
         studentHealthRepository.delete(studentHealth);
     }
+
+
 }

@@ -10,6 +10,6 @@ import java.time.LocalDate;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class HealthStatusRequest {
 
-    private String condition;
+    private String healthCondition;
     private LocalDate diagnosisDate;
 }

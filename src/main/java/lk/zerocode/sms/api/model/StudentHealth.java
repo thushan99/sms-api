@@ -17,8 +17,7 @@ public class StudentHealth extends BaseEntity {
     private Long id;
 
     @Lob
-    @Column(name = "`condition`")
-    private String condition;
+    private String healthCondition;
 
     private LocalDate diagnosisDate;
 
